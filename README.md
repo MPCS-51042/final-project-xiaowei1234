@@ -1,11 +1,15 @@
 # Proposals
 My ideas for my final project are...
 
-1. Use Python data analysis packages such as Pandas, Numpy, and Statsmodels to measure price elasticity of grocery items (this is from my work)
+1. Use Python data analysis packages such as Pandas, Numpy, and Statsmodels to measure price elasticity of grocery
+items (this is from my work)
 
-2. Create a pull request to sklearn to enable individual attribute level regularization coefficients for generalized linear models. Currently, a scalar value is provided so that all attributes have the same regularization parameter. The change would enable the Sklearn API to either take a scalar value or an array of numbers of equal length to number of attributes in the model.
+2. Create a pull request to sklearn to enable individual attribute level regularization coefficients for generalized
+linear models. Currently, a scalar value is provided so that all attributes have the same regularization parameter.
+The change would enable the Sklearn API to either take a scalar value or an array of numbers of equal length to
+number of attributes in the model.
 
-3. Build a flask app to output visualization of the beta distribution and output statistics for Bayesian AB testing
+4. Build a flask app to output visualization of the beta distribution and output statistics for Bayesian AB testing
 
 
 # Execution plan
@@ -27,3 +31,12 @@ Week 6 - Aggregate all testing material and submit for review on Sklearn github
 Week 7 - Create sample data analysis and simple webpage to showcase changes
 
 Week 8 - Finish webpage and create youTube video
+
+
+# Code
+
+proof.py - comparing results of sklearn regression versus statsmodels regression using the same regularization penalties
+and output to log file of comparisons
+
+files/proof_output.log - the output of proof.py
+
