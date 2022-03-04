@@ -2,10 +2,15 @@ from fastapi import FastAPI, HTTPException
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from database import Database
-
+from typing import List
 
 app = FastAPI()
 app.db = Database()
+
+
+class ModelResults(BaseModel):
+    alpha: List[float]
+    coefs: List[float]
 
 
 @app.get('/')
