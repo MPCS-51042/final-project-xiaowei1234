@@ -2,33 +2,27 @@ from fastapi import FastAPI, HTTPException
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from database import Database
-from typing import List
+from typing import Tuple
 
 app = FastAPI()
 app.db = Database()
 
 
-class ModelResults(BaseModel):
-    alpha: List[float]
-    coefs: List[float]
+class AlphaRange(BaseModel):
+    alphas: Tuple[float, float, float]
 
 
 @app.get('/')
-def home():
-    return {}
-
-
-@app.get('/{alpha}')
 def get_alpha(alpha: float):
     return app.db.get(alpha)
 
 
-@app.post('/{alpha}')
-def create_distribution(alpha: float):
-    app.db.put(alpha)
-    return app.db.get(alpha)
+@app.post('/')
+def post_range(rng: AlphaRange):
+    app.db.put(rng)
+    return app.db.get(rng)
 
 
 @app.delete('/')
-def delete_distribution(alpha: float):
-    return app.db.delete(alpha)
+def delete_all():
+    return app.db.delete_all()

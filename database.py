@@ -1,7 +1,13 @@
+import run_models as rm
+import statsmodels.api as sm
+
+
 class Database:
     """
     database
     """
+    X, y = return_X_y()
+
     def __init__(self):
         self._data = {}
 
@@ -9,14 +15,11 @@ class Database:
         return self._data[key]
 
     def put(self, key, value):
-        self._data[key] = value
+        coefs = rm.run_all_models(range(*value))
+        self._data[key] = coefs
 
     def all(self):
         return self._data
 
-    def delete(self, key):
-        lk = key
-        if lk in self._data:
-            del self._data[key]
-            return True
-        return False
+    def delete_all(self):
+        self._data = {}
