@@ -1,5 +1,4 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.templating import Jinja2Templates
+from fastapi import FastAPI
 from pydantic import BaseModel
 from database import Database
 from typing import Tuple
@@ -13,14 +12,27 @@ class AlphaRange(BaseModel):
 
 
 @app.get('/')
-def get_alpha(alpha: float):
-    return app.db.get(alpha)
+def homepage():
+    return {'Sklearn alpha penalty demonstration': "Synchronous vs Multiprocessing speed comparison"}
 
 
-@app.post('/')
-def post_range(rng: AlphaRange):
-    app.db.put(rng)
-    return app.db.get(rng)
+@app.get('/{vals}')
+def get_alpha_range(vals: str) -> str:
+    vals = tuple(float(v) for v in vals.split('_'))
+    rng = AlphaRange(alphas=vals)
+    return str(app.db.get(rng))
+
+
+@app.post('/sync')
+def post_range_sync(rng: AlphaRange) -> str:
+    app.db.put_sync(rng)
+    return str(app.db.get(rng))
+
+
+@app.post('/mp')
+def post_range_mp(rng: AlphaRange) -> str:
+    app.db.put_mp(rng)
+    return str(app.db.get(rng))
 
 
 @app.delete('/')
