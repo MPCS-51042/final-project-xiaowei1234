@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from database import Database
 from typing import Tuple
@@ -23,9 +23,15 @@ def get_alpha_range(vals: str) -> str:
     :param vals: input string
     :return: the model results in str
     """
-    vals = tuple(float(v) for v in vals.split('_'))
-    rng = AlphaRange(alphas=vals)
-    return str(app.db.get(rng))
+    try:
+        vals_t = tuple(float(v) for v in vals.split('_'))
+    except ValueError:
+        raise HTTPException(status_code=400, detail=f"Input {vals} are invalid")
+    rng = AlphaRange(alphas=vals_t)
+    res = app.db.get(rng)
+    if not res:
+        raise HTTPException(status_code=404, detail=f"{vals} not found in database!")
+    return res
 
 
 @app.post('/sync')
@@ -35,8 +41,10 @@ def post_range_sync(rng: AlphaRange) -> str:
     :param rng: penalty range
     :return: string of model results posted
     """
+    if not check_rng(rng.alphas):
+        raise HTTPException(status_code=400, detail='Range values not acceptable')
     app.db.put_sync(rng)
-    return str(app.db.get(rng))
+    return app.db.get(rng)
 
 
 @app.post('/mp')
@@ -46,8 +54,10 @@ def post_range_mp(rng: AlphaRange) -> str:
     :param rng: penalty range
     :return: string of model results posted
     """
+    if not check_rng(rng.alphas):
+        raise HTTPException(status_code=400, detail='Range values not acceptable')
     app.db.put_mp(rng)
-    return str(app.db.get(rng))
+    return app.db.get(rng)
 
 
 @app.delete('/')
@@ -57,3 +67,16 @@ def delete_all():
     :return: boolean for True if something was in DB before deletion and False if empty
     """
     return app.db.delete_all()
+
+
+def check_rng(rng: tuple) -> bool:
+    """
+    check valid inputs
+    :param rng: alpha range
+    :return: true for valid and false if not
+    """
+    if rng[1] <= rng[0]:
+        return False
+    if rng[2] > rng[1] - rng[0]:
+        return False
+    return True
