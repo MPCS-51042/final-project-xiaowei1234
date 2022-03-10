@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, responses
 from pydantic import BaseModel
 from database import Database
 from typing import Tuple
@@ -23,15 +23,23 @@ def get_alpha_range(vals: str) -> str:
     :param vals: input string
     :return: the model results in str
     """
-    try:
-        vals_t = tuple(float(v) for v in vals.split('_'))
-    except ValueError:
-        raise HTTPException(status_code=400, detail=f"Input {vals} are invalid")
-    rng = AlphaRange(alphas=vals_t)
+    rng = rng_parse(vals)
     res = app.db.get(rng)
     if not res:
         raise HTTPException(status_code=404, detail=f"{vals} not found in database!")
     return res
+
+
+@app.get('/{vals}/image', response_class=responses.Response)
+def get_alpha_range_image(vals: str):
+    """
+    NOT IMPLEMENTED BECAUSE I COULDN'T GET MATPLOTLIB TO INSTALL ON VIRTUALENV
+    :param vals:
+    :return: plot of whatever
+    """
+    rng = rng_parse(vals)
+    image_bytes = app.db.get_image(rng)
+    return responses.Response(content=image_bytes, media_type='image/png')
 
 
 @app.post('/sync')
@@ -80,3 +88,12 @@ def check_rng(rng: tuple) -> bool:
     if rng[2] > rng[1] - rng[0]:
         return False
     return True
+
+
+def rng_parse(vals):
+    try:
+        vals_t = tuple(float(v) for v in vals.split('_'))
+    except ValueError:
+        raise HTTPException(status_code=400, detail=f"Input {vals} are invalid")
+    rng = AlphaRange(alphas=vals_t)
+    return rng
