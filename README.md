@@ -42,6 +42,8 @@ Pull request: https://github.com/scikit-learn/scikit-learn/pull/22485
 
 Remote branch: https://github.com/xiaowei1234/scikit-learn/tree/glm_alpha
 
+Sklearn issue: https://github.com/scikit-learn/scikit-learn/issues/22350
+
 ### 2. Modeling API
 Creates an API that will run models according to range of regularization penalty values on one of the variables
 using the RAND Health Insurance Experiment Data https://www.statsmodels.org/devel/datasets/generated/randhie.html
