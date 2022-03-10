@@ -74,3 +74,6 @@ and output to log file of comparisons
 
 `tests/test_main.py` - pytest unit tests for the app
 
+### plot
+`files/MP:_False....png` saved plot from plotting. I couldn't get plotting to work with FastAPI and was
+running short on time. This is the plot produced by a unit test.
