@@ -30,7 +30,7 @@ Week 6 - Aggregate all testing material and submit for review on Sklearn github
 
 Week 7 - Create sample data analysis and ~~simple webpage to showcase changes~~ API
 
-Week 8 - Finish ~~webpage~~ API and create youTube video
+Week 8+ - Finish ~~webpage~~ API and create youTube video
 
 # Actual project work
 
@@ -52,7 +52,7 @@ models with a different penalty for each.
 
 # Code
 
-### Sklearn pull reuest proofs
+### Sklearn pull request proofs
 `proof.py` - comparing results of sklearn regression versus statsmodels regression using the same regularization penalties
 and output to log file of comparisons
 
@@ -66,6 +66,11 @@ and output to log file of comparisons
 
 `modelresults.py` - ModelResults class which stores model results from one series of penalties
 
-`database.py` - Database class that stores all the ModelResults in a dictionary
+`database.py` - Database class that stores all the ModelResults in a dictionary for the app
 
+`run_models.py` - synchronously run models as well as get data and timeit functions
+
+`mp_models.py` - use multiprocessing to run the models
+
+`tests/test_main.py` - pytest unit tests for the app
 

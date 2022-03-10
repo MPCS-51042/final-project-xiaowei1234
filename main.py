@@ -8,7 +8,12 @@ app.db = Database()
 
 
 class AlphaRange(BaseModel):
+    """
+    stores penalty generator parameters
+    whether multiprocess or not
+    """
     alphas: Tuple[float, float, float]
+    mp: bool
 
 
 @app.get('/')
@@ -17,10 +22,10 @@ def homepage():
 
 
 @app.get('/{vals}')
-def get_alpha_range(vals: str) -> str:
+def get_alpha_range(vals) -> str:
     """
     split the input into start, stop, step floats
-    :param vals: input string
+    :param vals: input alpha params
     :return: the model results in str
     """
     rng = rng_parse(vals)
@@ -42,29 +47,16 @@ def get_alpha_range_image(vals: str):
     return responses.Response(content=image_bytes, media_type='image/png')
 
 
-@app.post('/sync')
-def post_range_sync(rng: AlphaRange) -> str:
+@app.post('/')
+def post_range(rng: AlphaRange) -> str:
     """
     post penalties and model results into DB and return what was posted
     :param rng: penalty range
     :return: string of model results posted
     """
     if not check_rng(rng.alphas):
-        raise HTTPException(status_code=400, detail='Range values not acceptable')
-    app.db.put_sync(rng)
-    return app.db.get(rng)
-
-
-@app.post('/mp')
-def post_range_mp(rng: AlphaRange) -> str:
-    """
-    same as `post_range_sync` except using multiprocessing
-    :param rng: penalty range
-    :return: string of model results posted
-    """
-    if not check_rng(rng.alphas):
-        raise HTTPException(status_code=400, detail='Range values not acceptable')
-    app.db.put_mp(rng)
+        raise HTTPException(status_code=400, detail='Input values not acceptable')
+    app.db.put_db(rng)
     return app.db.get(rng)
 
 
@@ -91,9 +83,17 @@ def check_rng(rng: tuple) -> bool:
 
 
 def rng_parse(vals):
+    """
+    parse the get app parameter, otherwise raise HTTPException
+    :param vals: the input values in #_#_# format where # is a float
+    :param mp: multiprocessing bool
+    :return: tuple of (start, stop, step) in float
+    """
     try:
-        vals_t = tuple(float(v) for v in vals.split('_'))
+        splits = vals.split('_')
+        mp_bool = bool(int(splits[-1]))
+        vals_t = tuple(float(v) for v in splits[:-1])
     except ValueError:
         raise HTTPException(status_code=400, detail=f"Input {vals} are invalid")
-    rng = AlphaRange(alphas=vals_t)
+    rng = AlphaRange(alphas=vals_t, mp=mp_bool)
     return rng
